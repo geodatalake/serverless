@@ -1,0 +1,555 @@
+# serverless.yml
+
+service: data-lake-test-api
+
+frameworkVersion: ">=1.2.0 <2.0.0"
+
+provider:
+
+  stage: prod
+  name: aws
+  environment: ${file(./env.yml):${opt:stage, self:provider.stage}}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+      - dynamodb:Scan
+      - dynamodb:Query
+      - dynamodb:PutItem
+      - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:*
+    - Effect: Allow
+      Action:
+      - cognito-sync:*
+      - cognito-identity:*
+      Resource: arn:aws:cognito-identity:*:*:*
+    - Effect: Allow
+      Action:
+      - cognito-idp:*
+      Resource: arn:aws:cognito-idp:*:*:*
+  runtime: nodejs4.3
+
+package:
+  exclude:
+    - .git/**
+
+resources:
+  Description: ${self:provider.environment.SERVICE} [${self:provider.environment.STAGE}] template
+  Resources:
+    CacheTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+        - AttributeName: token
+          AttributeType: S
+        - AttributeName: type
+          AttributeType: S
+        KeySchema:
+        - AttributeName: token
+          KeyType: HASH
+        - AttributeName: type
+          KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.CACHE_DB_NAME}
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.USERS_DB_NAME}
+
+    DataLakeLambdaExecRoleTEST:
+        Type: "AWS::IAM::Role"
+        Properties:
+            RoleName:  { "Fn::Join" :  ["-", ["data-lake-apig-role-TEST", Ref: "AWS::Region" ]]}
+            AssumeRolePolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                    -
+                        Effect: "Allow"
+                        Principal:
+                            Service:
+                                - "apigateway.amazonaws.com"
+                        Action:
+                                - "sts:AssumeRole"
+            Path: "/"
+
+    DataLakeLambdaExecPolicy:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            Description: "Data Lake policy for the data lake api to invoke Lambda microservices."
+            PolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                    -
+                        Effect: "Allow"
+                        Action:
+                            - "lambda:InvokeFunction"
+                        Resource:
+                          - ${env:SearchArn}
+            Roles:
+                -
+                    Ref: "DataLakeLambdaExecRoleTEST"
+
+plugins:
+  - deployment-info
+
+functions:
+  admin:
+    handler: services/admin/lib/index.respond
+    events:
+      - http:
+          path: admin/apikeys
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Auth
+          request:
+            template:
+              application/json: "{\"statusCode\":200}"
+            passthroughBehavior: WHEN_NO_MATCH
+            httpMethod: "POST"
+            uri:
+              Fn::Join:
+                - ""
+                - - "arn:aws:apigateway:"
+                  - Ref: "AWS::Region"
+                  - ":lambda:path/2015-03-31/functions/"
+                  - ${env:SearchArn}
+                  - "/invocations"
+            type: "aws_proxy"
+
+      - http:
+          path: admin/apikeys/{access_key_id}
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Auth
+          request:
+            template:
+              application/json: "{\"statusCode\":200}"
+            passthroughBehavior: WHEN_NO_MATCH
+            httpMethod: "POST"
+            uri:
+              Fn::Join:
+                - ""
+                - - "arn:aws:apigateway:"
+                  - Ref: "AWS::Region"
+                  - ":lambda:path/2015-03-31/functions/"
+                  - ${env:SearchArn}
+                  - "/invocations"
+            type: "aws_proxy"
+
+      - http:
+          path: admin/invitations
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+          # request:
+          #   template:
+          #     application/json: "{\"statusCode\":200}"
+          #   passthroughBehavior: WHEN_NO_MATCH
+          #   httpMethod: "POST"
+          #   uri:
+          #     Fn::Join:
+          #       - ""
+          #       - - "arn:aws:apigateway:"
+          #         - Ref: "AWS::Region"
+          #         - ":lambda:path/2015-03-31/functions/"
+          #         - ${env:SearchArn}
+          #         - "/invocations"
+          #   type: "aws_proxy"
+
+      - http:
+          path: admin/settings/config
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+      - http:
+          path: admin/settings/governance
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+      - http:
+          path: admin/settings/governance/{setting_id}
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+      - http:
+          path: admin/users
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+      - http:
+          path: admin/users/{user_id}
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+
+  cart:
+    handler: services/cart/lib/index.respond
+    events:
+      - http:
+          path: cart
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+      - http:
+          path: cart/{item_id}
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+
+  packages:
+    handler: services/package/lib/index.respond
+    events:
+      - http:
+          path: packages
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+      - http:
+          path: packages/{package_id}
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+      - http:
+          path: packages/{package_id}/datasets
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+
+      - http:
+          path: packages/{package_id}/datasets/{dataset_id}
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+      - http:
+          path: packages/{package_id}/datasets/{dataset_id}/process
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+
+      - http:
+          path: packages/{package_id}/metadata
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+
+      - http:
+          path: packages/{package_id}/metadata/{metadata_id}
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+
+
+  profile:
+    handler: services/profile/lib/index.respond
+    events:
+      - http:
+          path: profile
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+
+      - http:
+          path: profile/apikey
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            name: authorize # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+
+
+  search:
+    handler: services/search/lib/index.respond
+    events:
+      - http:
+          path: search
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: # An AWS API Gateway custom authorizer function
+            name: authorize # The name of the authorizer function (must be in this service)
+            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
+          #   # Can be used instead of name to reference a function outside of service
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+
+  signin:
+    handler: authorizer/handler.signin
+    memorySize: 256
+    timeout: 15
+    events:
+      - http:
+          path: auth/signin/{provider}
+          method: get
+          integration: lambda-proxy
+  callback:
+    handler: authorizer/handler.callback
+    memorySize: 256
+    timeout: 15
+    events:
+      - http:
+          path: auth/callback/{provider}
+          method: get
+          integration: lambda-proxy
+  refresh:
+    handler: authorizer/handler.refresh
+    memorySize: 256
+    timeout: 15
+    events:
+      - http:
+          path: auth/refresh/{refresh_token}
+          method: get
+          cors: true
+          integration: lambda
+          request:
+            template:
+              application/json: |
+                {
+                  "refresh_token":"$input.params('refresh_token')",
+                  "id":"$input.params('id')",
+                  "state":"$input.params('state')",
+                  "host":"$input.params().header.get('host')",
+                  "stage":"$context.stage"
+                }
+  authorize:
+    handler: authorizer/handler.authorize
+  schema:
+    handler: authorizer/handler.schema
