@@ -3,7 +3,7 @@
 ```
 npm install
 ```
-In each directory.
+/authorizer and each directory in /services
 
 
 to run
