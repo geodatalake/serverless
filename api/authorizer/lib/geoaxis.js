@@ -1,5 +1,6 @@
 'use strict';
 
+const jwtDecode = require('jwt-decode');
 const slsAuth = require('serverless-authentication');
 
 const Provider = slsAuth.Provider;
@@ -15,11 +16,25 @@ const signinHandler = (config, options, callback) => {
 };
 
 const callbackHandler = (event, config, callback) => {
+
+    console.log('event')
+    console.log(event)
+
+    console.log('config')
+    console.log(config)
+
+    console.log('callback')
+    console.log(callback)
+
     const geoaxis = new Provider(config);
+
+    // HACK: retrieve access_token and map profile via callbackHandler
+    const decodedProfile = jwtDecode(event.code);
+
     const profileMap = response =>
         new Profile({
-            id: response.id,
-            name: response.displayName,
+            id: decodedProfile['oracle.oauth.client_origin_id'],
+            name: decodedProfile['oracle.oauth.user_origin_id'],
             email: response.emails ? response.emails[0].value : null,
             picture: response.image ? response.image.url : null,
             provider: 'geoaxis',

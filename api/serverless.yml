@@ -1,6 +1,6 @@
 # serverless.yml
 
-service: data-lake-test-api
+service: data-lake-api
 
 frameworkVersion: ">=1.2.0 <2.0.0"
 
@@ -69,7 +69,7 @@ resources:
     DataLakeLambdaExecRoleTEST:
         Type: "AWS::IAM::Role"
         Properties:
-            RoleName:  { "Fn::Join" :  ["-", ["data-lake-apig-role-TEST", Ref: "AWS::Region" ]]}
+            RoleName:  { "Fn::Join" :  ["-", ["data-lake-apig-role-prod", Ref: "AWS::Region" ]]}
             AssumeRolePolicyDocument:
                 Version: "2012-10-17"
                 Statement:
@@ -116,12 +116,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Auth
+          authorizer: authorize
           request:
             template:
               application/json: "{\"statusCode\":200}"
@@ -147,12 +142,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Auth
+          authorizer: authorize
           request:
             template:
               application/json: "{\"statusCode\":200}"
@@ -178,26 +168,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
-          # request:
-          #   template:
-          #     application/json: "{\"statusCode\":200}"
-          #   passthroughBehavior: WHEN_NO_MATCH
-          #   httpMethod: "POST"
-          #   uri:
-          #     Fn::Join:
-          #       - ""
-          #       - - "arn:aws:apigateway:"
-          #         - Ref: "AWS::Region"
-          #         - ":lambda:path/2015-03-31/functions/"
-          #         - ${env:SearchArn}
-          #         - "/invocations"
-          #   type: "aws_proxy"
+          authorizer: authorize
 
       - http:
           path: admin/settings/config
@@ -209,12 +180,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
       - http:
           path: admin/settings/governance
@@ -226,12 +192,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
       - http:
           path: admin/settings/governance/{setting_id}
@@ -243,12 +204,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
       - http:
           path: admin/users
@@ -260,12 +216,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
       - http:
           path: admin/users/{user_id}
@@ -277,12 +228,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
 
   cart:
@@ -298,12 +244,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
       - http:
           path: cart/{item_id}
@@ -315,12 +256,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
 
   packages:
@@ -336,12 +272,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
       - http:
           path: packages/{package_id}
@@ -353,12 +284,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
       - http:
           path: packages/{package_id}/datasets
@@ -370,12 +296,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
 
       - http:
@@ -388,12 +309,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
       - http:
           path: packages/{package_id}/datasets/{dataset_id}/process
@@ -405,12 +321,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
 
       - http:
@@ -423,12 +334,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
 
       - http:
@@ -441,17 +347,12 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
 
 
   profile:
-    handler: services/profile/lib/index.respond
+    handler: services/search/lib/index.respond
     events:
       - http:
           path: profile
@@ -463,12 +364,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            arn: arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
 
       - http:
@@ -481,12 +377,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            name: authorize # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
 
 
@@ -503,12 +394,7 @@ functions:
             - "application/json"
             produces:
             - "application/json"
-          authorizer: # An AWS API Gateway custom authorizer function
-            name: authorize # The name of the authorizer function (must be in this service)
-            # arn: arn:aws:cognito-idp:us-east-1:623236760514:userpool/us-east-1_qJzTcP7BK
-          #   # Can be used instead of name to reference a function outside of service
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+          authorizer: authorize
 
 
   signin:

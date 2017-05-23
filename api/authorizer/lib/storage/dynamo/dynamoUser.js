@@ -6,7 +6,7 @@ const table = process.env.USERS_DB_NAME;
 const AWS = require('aws-sdk');
 
 const config = {
-  region: AWS.config.region || process.env.REGION || 'eu-west-1',
+  region: AWS.config.region || process.env.REGION || 'us-east-1',
 };
 
 if (process.env.LOCAL_DDB_ENDPOINT) {

@@ -7,9 +7,7 @@ const config = slsAuth.config;
 const utils = slsAuth.utils;
 
 // Providers
-const facebook = require('serverless-authentication-facebook');
 const google = require('serverless-authentication-google');
-const microsoft = require('serverless-authentication-microsoft');
 const geoaxis = require('../geoaxis');
 
 // Common
@@ -34,13 +32,6 @@ function signinHandler(proxyEvent, context) {
     cache.createState()
         .then((state) => {
             switch (event.provider) {
-                case 'facebook':
-                    facebook.signinHandler(providerConfig, {
-                            scope: 'email',
-                            state
-                        },
-                        (err, data) => redirectProxyCallback(context, data));
-                    break;
                 case 'google':
                     google.signinHandler(providerConfig, {
                             scope: 'profile email',
@@ -48,15 +39,7 @@ function signinHandler(proxyEvent, context) {
                         },
                         (err, data) => redirectProxyCallback(context, data));
                     break;
-                case 'microsoft':
-                    microsoft.signinHandler(providerConfig, {
-                            scope: 'wl.basic wl.emails',
-                            state
-                        },
-                        (err, data) => redirectProxyCallback(context, data));
-                    break;
                 case 'geoaxis':
-                    // See ./geoaxis.js
                     geoaxis.signinHandler(providerConfig, {
                             state
                         },

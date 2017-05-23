@@ -1,0 +1,3 @@
+api/.serverless
+api/.serverless_plugins/deployment-info/node_modules
+api/authorizer/node_modules

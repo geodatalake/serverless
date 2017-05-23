@@ -7,9 +7,7 @@ const config = slsAuth.config;
 const utils = slsAuth.utils;
 
 // Providers
-const facebook = require('serverless-authentication-facebook');
 const google = require('serverless-authentication-google');
-const microsoft = require('serverless-authentication-microsoft');
 const geoaxis = require('../geoaxis');
 
 // Common
@@ -75,6 +73,9 @@ function callbackHandler(proxyEvent, context) {
      * @param state
      */
     const handleResponse = (error, profile, state) => {
+
+        console.log('oauth_profile', profile)
+
         if (error) {
             // Error response if something went wrong at the first place
             errorResponse({
@@ -89,6 +90,10 @@ function callbackHandler(proxyEvent, context) {
                             userId: id
                         }))
                         .then((userContext) => {
+
+                            console.log('USER_CONTEXT')
+                            console.log(userContext)
+
                             // saveUser can optionally return an authorizer context map
                             // see http://docs.aws.amazon.com/apigateway/latest/developerguide/use-custom-authorizer.html
                             if (typeof userContext === 'object' && !Array.isArray(userContext)) {
@@ -110,17 +115,11 @@ function callbackHandler(proxyEvent, context) {
     };
 
     switch (event.provider) {
-        case 'facebook':
-            facebook.callbackHandler(event, providerConfig, handleResponse);
-            break;
         case 'google':
             google.callbackHandler(event, providerConfig, handleResponse);
             break;
-        case 'microsoft':
-            microsoft.callbackHandler(event, providerConfig, handleResponse);
-            break;
         case 'geoaxis':
-            geoaxis.callbackHandler(event, providerConfig, handleResponse); // See ./geoaxis.js
+            geoaxis.callbackHandler(event, providerConfig, handleResponse); // geoaxis.js
             break;
         default:
             errorResponse({

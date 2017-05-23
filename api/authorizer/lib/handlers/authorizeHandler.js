@@ -18,7 +18,7 @@ const policyContext = (data) => {
 
 // Authorize
 const authorize = (event, callback) => {
-    const stage = event.methodArn.split('/')[1] || 'dev' // @todo better implementation
+    const stage = event.methodArn.split('/')[1] || 'prod' // @todo
     let error = null
     let policy
     const authorizationToken = event.authorizationToken
