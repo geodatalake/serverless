@@ -4,7 +4,6 @@
 
 Usage
 ```
-cd api/
 npm install
 ```
 
