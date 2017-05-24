@@ -1,12 +1,14 @@
 # serverless
 
+// todo detailed instructions
+
+Usage
 ```
+cd api/
 npm install
 ```
-/authorizer and each directory in /services
 
-
-to run
+Run
 ```
-SLS_DEBUG=* serverless deploy -v
+SearchArn=arn:aws:cognito-idp:us-east-1:414519249282:userpool/us-east-1_WWBT0myU1 SLS_DEBUG=* serverless deploy -v
 ```
