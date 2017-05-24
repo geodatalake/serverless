@@ -58,6 +58,7 @@ module.exports.respond = function(event, cb) {
         LogType: 'None',
         Payload: JSON.stringify(_authCheckPayload)
     };
+    
     let lambda = new AWS.Lambda();
     lambda.invoke(params, function(err, data) {
         if (err) {

@@ -104,7 +104,7 @@ plugins:
 
 functions:
   admin:
-    handler: services/admin/lib/index.respond
+    handler: services/admin/index.handler
     events:
       - http:
           path: admin/apikeys
@@ -232,7 +232,7 @@ functions:
 
 
   cart:
-    handler: services/cart/lib/index.respond
+    handler: services/cart/index.handler
     events:
       - http:
           path: cart
@@ -260,7 +260,7 @@ functions:
 
 
   packages:
-    handler: services/package/lib/index.respond
+    handler: services/package/index.handler
     events:
       - http:
           path: packages
@@ -298,7 +298,6 @@ functions:
             - "application/json"
           authorizer: authorize
 
-
       - http:
           path: packages/{package_id}/datasets/{dataset_id}
           method: any
@@ -323,7 +322,6 @@ functions:
             - "application/json"
           authorizer: authorize
 
-
       - http:
           path: packages/{package_id}/metadata
           method: any
@@ -335,7 +333,6 @@ functions:
             produces:
             - "application/json"
           authorizer: authorize
-
 
       - http:
           path: packages/{package_id}/metadata/{metadata_id}
@@ -350,9 +347,8 @@ functions:
           authorizer: authorize
 
 
-
   profile:
-    handler: services/search/lib/index.respond
+    handler: services/profile/index.handler
     events:
       - http:
           path: profile
@@ -365,7 +361,6 @@ functions:
             produces:
             - "application/json"
           authorizer: authorize
-
 
       - http:
           path: profile/apikey
@@ -380,9 +375,8 @@ functions:
           authorizer: authorize
 
 
-
   search:
-    handler: services/search/lib/index.respond
+    handler: services/search/index.handler
     events:
       - http:
           path: search
@@ -406,6 +400,8 @@ functions:
           path: auth/signin/{provider}
           method: get
           integration: lambda-proxy
+
+
   callback:
     handler: authorizer/handler.callback
     memorySize: 256
@@ -415,6 +411,8 @@ functions:
           path: auth/callback/{provider}
           method: get
           integration: lambda-proxy
+
+
   refresh:
     handler: authorizer/handler.refresh
     memorySize: 256
@@ -435,7 +433,10 @@ functions:
                   "host":"$input.params().header.get('host')",
                   "stage":"$context.stage"
                 }
+
+
   authorize:
     handler: authorizer/handler.authorize
+
   schema:
     handler: authorizer/handler.schema
