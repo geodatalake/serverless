@@ -101,6 +101,11 @@ function callbackHandler(proxyEvent, context) {
                                     data.authorizationToken.payload || {},
                                     userContext);
                             }
+
+                            data.authorizationToken.payload.username = profile.name
+                            data.authorizationToken.payload.email = profile.email
+                            data.authorizationToken.payload.provider = profile.provider
+
                             return cache.saveRefreshToken(id, data.authorizationToken.payload);
                         }).then(result => tokenResponse(Object.assign(data, {
                             refreshToken: result

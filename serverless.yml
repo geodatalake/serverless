@@ -375,6 +375,18 @@ functions:
           authorizer: authorize
 
 
+  manifest:
+    handler: services/manifest/index.handler
+
+
+  logging:
+    handler: services/logging/index.handler
+
+
+  helper:
+    handler: services/helper/index.handler
+
+
   search:
     handler: services/search/index.handler
     events:
