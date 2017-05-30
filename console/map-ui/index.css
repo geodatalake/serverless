@@ -1,0 +1,148 @@
+#map {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+.left-bar {
+    width: 20%;
+    height: 100%;
+    background-color: #333;
+    color: white;
+    z-index: 2;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    padding: 10px;
+    opacity: .9;
+    border-right-style: solid;
+    border-right-color: white;
+}
+
+input {
+    color: black;
+}
+
+.top-bar {
+    border-bottom-style: solid;
+    border-color: white;
+    padding-bottom: 20px;
+}
+
+.bottom-bar {}
+
+.layer-switcher {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    width: 200px;
+    z-index: 2;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    opacity: .9;
+    border-radius: 5px;
+}
+
+td {
+    padding: 5px;
+}
+
+.md-datepicker-input {
+    color: white;
+}
+
+.md-datepicker-calendar-icon {
+    color: white;
+}
+
+.draw {
+    width: 30px;
+    height: 30px;
+    background-color: white;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.arrow-left {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    right: 0px;
+    z-index: 2;
+}
+
+.arrow-right {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    left: 4%;
+    z-index: 2;
+}
+
+.left-col {
+    width: 50px;
+}
+
+.map-buttons {
+    z-index: 2;
+    position: absolute;
+    right: 5px;
+    top: 100px;
+}
+
+.layer-button {
+    z-index: 3;
+    position: absolute;
+    right: 10px;
+    top: 0px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    background-color: whitesmoke;
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: #333;
+    border-width: 1px;
+}
+
+.layer-button-dark {
+    z-index: 3;
+    position: absolute;
+    right: 10px;
+    top: 0px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    background-color: #333;
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: whitesmoke;
+    border-width: 1px;
+}
+
+.map-button {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    background-color: whitesmoke;
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: #333;
+    border-width: 1px;
+}
+
+.map-button:hover {
+    background-color: #FFF;
+}
+
+.header {}
