@@ -390,6 +390,21 @@ functions:
             - "application/json"
           authorizer: authorize
 
+  submit:
+    handler: services/webapp/index.handler
+    events:
+      - http:
+          path: submit
+          method: any
+          integration: lambda-proxy
+          cors: true
+          options:
+            consumes:
+            - "application/json"
+            produces:
+            - "application/json"
+          authorizer: authorize
+
 
   signin:
     handler: authorizer/handler.signin
