@@ -20,6 +20,7 @@
 // Declare app level module which depends on views, and components
 angular.module('dataLake', [
     'ui.router',
+    'ngMaterial',
     'ngResource',
     'ngMessages',
     'AWS-UI-Components',
@@ -39,7 +40,12 @@ angular.module('dataLake', [
     'dataLake.admin.user',
     'dataLake.version',
     'dataLake.goclick.goClick-directive',
-    'dataLake.compareTo.compareTo-directive'
+    'dataLake.compareTo.compareTo-directive',
+    'dataLake.map-ui',
+    'dataLake.factory.map-ui.api',
+    'dataLake.factory.map-ui.base',
+    'dataLake.factory.map-ui.interactions',
+    'dataLake.factory.map-ui.vector'
 ])
 
 .filter('moment', function() {

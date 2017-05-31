@@ -1,0 +1,134 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "ol3-layerswitcher@^1.1.2",
+        "scope": null,
+        "escapedName": "ol3-layerswitcher",
+        "name": "ol3-layerswitcher",
+        "rawSpec": "^1.1.2",
+        "spec": ">=1.1.2 <2.0.0",
+        "type": "range"
+      },
+      "/Users/apurv/Documents/spaceflight/webapp"
+    ]
+  ],
+  "_from": "ol3-layerswitcher@>=1.1.2 <2.0.0",
+  "_id": "ol3-layerswitcher@1.1.2",
+  "_inCache": true,
+  "_location": "/ol3-layerswitcher",
+  "_nodeVersion": "5.11.1",
+  "_npmOperationalInternal": {
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/ol3-layerswitcher-1.1.2.tgz_1471983298204_0.26475199218839407"
+  },
+  "_npmUser": {
+    "name": "renaud009",
+    "email": "renaud.hebertlegault@gmail.com"
+  },
+  "_npmVersion": "3.8.6",
+  "_phantomChildren": {
+    "async": "1.5.2",
+    "browserify": "13.0.1",
+    "closure-util": "1.15.0",
+    "derequire": "2.0.3",
+    "fs-extra": "0.30.0",
+    "glob": "7.0.5",
+    "handlebars": "4.0.5",
+    "jsdoc": "3.4.0",
+    "marked": "0.3.5",
+    "metalsmith": "2.1.0",
+    "metalsmith-layouts": "1.6.5",
+    "nomnom": "1.8.1",
+    "pbf": "2.0.1",
+    "pixelworks": "1.1.0",
+    "rbush": "2.0.1",
+    "temp": "0.8.3",
+    "vector-tile": "1.2.1",
+    "walk": "2.3.9"
+  },
+  "_requested": {
+    "raw": "ol3-layerswitcher@^1.1.2",
+    "scope": null,
+    "escapedName": "ol3-layerswitcher",
+    "name": "ol3-layerswitcher",
+    "rawSpec": "^1.1.2",
+    "spec": ">=1.1.2 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/ol3-layerswitcher/-/ol3-layerswitcher-1.1.2.tgz",
+  "_shasum": "3f61a8c28193569e7a8380af80d42e3a2e46e278",
+  "_shrinkwrap": null,
+  "_spec": "ol3-layerswitcher@^1.1.2",
+  "_where": "/Users/apurv/Documents/spaceflight/webapp",
+  "author": {
+    "name": "Matt Walker",
+    "url": "http://longwayaround.org.uk"
+  },
+  "bugs": {
+    "url": "https://github.com/walkermatt/ol3-layerswitcher/issues"
+  },
+  "contributors": [
+    {
+      "name": "Thomas Gratier",
+      "email": "thomas_gratier@yahoo.fr"
+    },
+    {
+      "name": "Poul Kjeldager Sørensen",
+      "email": "pks@s-innovations.net"
+    },
+    {
+      "name": "Micho García",
+      "email": "micho.garcia@geomati.co"
+    },
+    {
+      "name": "olivierdalang",
+      "email": "olivier.dalang@gmail.com"
+    }
+  ],
+  "dependencies": {
+    "openlayers": "~3.17.1"
+  },
+  "description": "Layer switcher control for OpenLayers 3",
+  "devDependencies": {
+    "dirtydocs": "0.0.1",
+    "expect.js": "~0.3.1",
+    "jquery": "~1.11.1",
+    "jsdoc": "~3.3.0-beta1",
+    "lodash": "~2.4.1",
+    "mocha": "~1.20.1"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "3f61a8c28193569e7a8380af80d42e3a2e46e278",
+    "tarball": "https://registry.npmjs.org/ol3-layerswitcher/-/ol3-layerswitcher-1.1.2.tgz"
+  },
+  "gitHead": "e9531d17f0bfa6b41310fd222888aa3421e6cf26",
+  "homepage": "https://github.com/walkermatt/ol3-layerswitcher#readme",
+  "keywords": [
+    "openlayers",
+    "layerswitcher",
+    "ol3"
+  ],
+  "license": "MIT",
+  "maintainers": [
+    {
+      "name": "renaud009",
+      "email": "renaud.hebertlegault@gmail.com"
+    }
+  ],
+  "name": "ol3-layerswitcher",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/walkermatt/ol3-layerswitcher.git"
+  },
+  "scripts": {
+    "doc": "jsdoc --explain src/ol3-layerswitcher.js | node_modules/.bin/dirtydocs util/README.md > README.md"
+  },
+  "version": "1.1.2"
+}

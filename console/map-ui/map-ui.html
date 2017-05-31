@@ -1,0 +1,61 @@
+<div id="map">
+
+</div>
+<div class="left-bar" ng-show="openBar">
+    <img class="arrow-left" ng-click="toggleLeftBar()" src="./map-ui/images/arrows-left.png" ng-show="openBar">
+
+    <div class="top-bar">
+        <div class="header">
+            <h3>Datalake</h3>
+        </div>
+        <!--<br>-->
+        <!--Draw an AOI: <br>-->
+        <!--<img ng-click="drawAOI('Polygon')" title="Draw a square" class="draw" src="./map-ui/images/square_2.png" />-->
+        <!--<img ng-click="drawAOI('Circle')" title="Draw a circle" class="draw" src="./map-ui/images/circle.png" /><br>-->
+        <br> Select a Date Range: <br>
+        <span class="left-col">Start:</span>
+        <md-datepicker style="color:white;" ng-change="dateChange()" ng-model="date.start" md-placeholder="Enter date"></md-datepicker><br>
+        <span class="left-col">End:&nbsp;</span>
+        <md-datepicker style="color:white;" ng-change="dateChange()" md-min-date="date.start" ng-model="date.end" md-placeholder="Enter date"></md-datepicker>
+
+        <br> Select a file type:
+        <select ng-options="item as item.label for item in files" style="color:black;" ng-model="file"></select>
+        <br>
+        <br>
+        <button ng-click="submit()" style="color:black;">
+            Submit
+        </button>
+    </div>
+
+    <div class="bottom-bar">
+        {{result}}
+    </div>
+
+</div>
+<img class="arrow-right" ng-click="toggleLeftBar()" src="./map-ui/images/arrows.png" ng-show="!openBar">
+<img ng-src="{{layerImgSrc}}" ng-mouseover="switcherShow = true; layerImgSrc = './map-ui/images/layer-switcher-dark.png'" title="Draw a circle" ng-class="{'layer-button': !switcherShow, 'layer-button-dark':switcherShow}">
+
+<div class="map-buttons">
+    </br>
+    <img src="./map-ui/images/circle.png" ng-click="drawAOI('Circle')" title="Draw a circle" class="map-button">
+    </br>
+    <img src="./map-ui/images/square_2.png" ng-click="drawAOI('Polygon')" title="Draw a Square" class="map-button">
+</div>
+
+</div>
+<div class="layer-switcher" ng-show="switcherShow" ng-mouseover="switcherShow = true" ng-mouseout="switcherShow = false;layerImgSrc = './map-ui/images/layer-switcher.png'">
+    <h5>Layers</h5>
+    <table>
+        <tr ng-repeat="layer in layers">
+            <td><input ng-click="toggleLayer(layer)" type="checkbox" ng-model="selectedBaseLayer" value="{{layer.get('title')}}" type="checkbox"></td>
+            <td>{{layer.get('title')}}</td>
+        </tr>
+    </table>
+    <h5>Base Layers</h5>
+    <table>
+        <tr ng-repeat="layer in baseLayers">
+            <td><input ng-click="toggleBaseLayer(layer)" type="radio" ng-model="selectedBaseLayer" value="{{layer.get('title')}}" type="checkbox"></td>
+            <td>{{layer.get('title')}}</td>
+        </tr>
+    </table>
+</div>

@@ -19,6 +19,9 @@
         <link rel="stylesheet" href="/lib/aws-ui/AWS-UI-Components/base-styles/home.css" />
         <link rel="stylesheet" href="/styles/main.css" />
         <link rel="stylesheet" href="/lib/bower_components/angular-block-ui/dist/angular-block-ui.min.css"/>
+        <link rel="stylesheet" href="/lib/bower_components/openlayers/dist/ol.css"/>
+        <link rel="stylesheet" href="/lib/bower_components/ol3-layerswitcher/src/ol3-layerswitcher.css"/>
+        <link rel="stylesheet" href="/lib/bower_components/angular-material/angular-material.min.css"/>
     </head>
     <body class="block-ui">
 
@@ -46,6 +49,14 @@
         <script src="/lib/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
         <script src="/lib/bower_components/angular-messages/angular-messages.min.js"></script>
 
+        <!-- node module imports -->
+        <script src="/lib/bower_components/angular-animate/angular-animate.min.js"></script>
+        <script src="/lib/bower_components/angular-aria/angular-aria.min.js"></script>
+        <script src="/lib/bower_components/angular-material/angular-material.min.js"></script>
+        <script src="/lib/bower_components/openlayers/dist/ol.js"></script>
+        <script src="/lib/bower_components/ol3-layerswitcher/src/ol3-layerswitcher.js"></script>
+        <!-- <script src="/lib/bower_components/request/request.js"></script> -->
+
         <!-- <script src="bower_components/angular-route/angular-route.js"></script> -->
         <script src="/lib/aws-ui/AWS-UI-Components/components.js"></script>
         <script src="/lib/aws-ui/AWS-UI-Components-Angular/index.js"></script>
@@ -58,6 +69,10 @@
         <script src="common/factories/packageFactory.js"></script>
         <script src="common/factories/cartFactory.js"></script>
         <script src="common/factories/profileFactory.js"></script>
+        <script src="common/factories/openlayers.api.js"></script>
+        <script src="common/factories/openlayers.base.js"></script>
+        <script src="common/factories/openlayers.interactions.js"></script>
+        <script src="common/factories/openlayers.vector.js"></script>
         <script src="signin/signin.js"></script>
         <script src="confirm/confirm.js"></script>
         <script src="forgot/forgot.js"></script>
@@ -68,6 +83,7 @@
         <script src="package/package.js"></script>
         <script src="search/search.js"></script>
         <script src="cart/cart.js"></script>
+        <script src="map-ui/map-ui.js"></script>
         <script src="admin/users/invitation.js"></script>
         <script src="admin/users/users.js"></script>
         <script src="admin/users/user.js"></script>
