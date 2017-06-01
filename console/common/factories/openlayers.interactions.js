@@ -10,7 +10,7 @@ angular.module('dataLake.factory.map-ui.interactions', [])
                 mapApi.drawOn = true;
                 var sketch;
                 mapApi.globalDraw = new ol.interaction.Draw({
-                    source: mapApi.map.drawSource,
+                    source: mapApi.drawSource,
                     type: type
                 });
                 mapApi.globalDraw.on('drawstart',
@@ -20,15 +20,15 @@ angular.module('dataLake.factory.map-ui.interactions', [])
                     }, this);
                 mapApi.globalDraw.on("drawend", function(e) {
                     func(e.feature)
-                    mapApi.map.drawSource.clear()
+                    mapApi.drawSource.clear()
                     mapApi.drawOn = false;
-                    mapApi.removeInteraction(mapApi.globalDraw);
+                    mapApi.map.removeInteraction(mapApi.globalDraw);
                 });
                 mapApi.map.addInteraction(mapApi.globalDraw);
 
             } else {
                 console.log("Stop")
-                MapInteractions.drawOn = false;
+                mapApi.drawOn = false;
                 mapApi.map.removeInteraction(mapApi.globalDraw);
 
             }

@@ -28,7 +28,12 @@
     </div>
 
     <div class="bottom-bar">
-        {{result}}
+        <h4 ng-show="results.length>0">Results</h4>
+        <span ng-repeat = "result in results">
+            <input type = "checkbox" ng-model = "result.checked"> {{result.url}}
+        </span>
+        <br><br>
+        <button ng-show="results.length >0" style="color:black" ng-click="createPackage()"> Create Package </button>
     </div>
 
 </div>
@@ -47,7 +52,7 @@
     <h5>Layers</h5>
     <table>
         <tr ng-repeat="layer in layers">
-            <td><input ng-click="toggleLayer(layer)" type="checkbox" ng-model="selectedBaseLayer" value="{{layer.get('title')}}" type="checkbox"></td>
+            <td><input ng-click="toggleLayer(layer)" type="checkbox" ng-model="layer.checked" value="{{layer.get('title')}}" type="checkbox"></td>
             <td>{{layer.get('title')}}</td>
         </tr>
     </table>

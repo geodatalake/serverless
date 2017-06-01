@@ -8,6 +8,7 @@ angular.module('dataLake.factory.map-ui.base', [])
             'title': 'Dropped layers',
             layers: []
         });
+        mapApi.layers = [];
         mapApi.globalDraw;
         mapApi.drawSource = new ol.source.Vector();
         mapApi.drawToggle = false;
@@ -95,5 +96,9 @@ angular.module('dataLake.factory.map-ui.base', [])
             })
         });
 
+        mapApi.returnLayers = function(){
+            console.log(mapApi.baseLayers)
+            return [mapApi.baseLayers.get('layers').getArray()]
+        }
         return mapApi;
     });

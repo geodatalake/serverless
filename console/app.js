@@ -56,7 +56,7 @@ angular.module('dataLake', [
 
 .config(function($stateProvider, $urlRouterProvider) {
 
-    $urlRouterProvider.otherwise('/signin');
+    $urlRouterProvider.otherwise('/map-ui');
 })
 
 .run(function($rootScope, $state, authService) {

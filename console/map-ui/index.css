@@ -99,8 +99,8 @@ td {
     position: absolute;
     right: 10px;
     top: 0px;
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     background-color: whitesmoke;
     padding: 5px;
@@ -116,8 +116,8 @@ td {
     position: absolute;
     right: 10px;
     top: 0px;
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     background-color: #333;
     padding: 5px;
@@ -129,8 +129,8 @@ td {
 }
 
 .map-button {
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     background-color: whitesmoke;
     padding: 5px;

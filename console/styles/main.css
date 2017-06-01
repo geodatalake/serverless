@@ -425,6 +425,8 @@ input {
     color: white;
     opacity: .9;
     border-radius: 5px;
+    height:150px;
+    overflow:auto;
 }
 
 td {
@@ -453,6 +455,7 @@ td {
     position: absolute;
     right: 0px;
     z-index: 2;
+    cursor:pointer;
 }
 
 .arrow-right {
@@ -461,6 +464,7 @@ td {
     position: absolute;
     left: 4%;
     z-index: 2;
+    cursor:pointer;
 }
 
 .left-col {
@@ -479,8 +483,8 @@ td {
     position: absolute;
     right: 10px;
     top: 0px;
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     background-color: whitesmoke;
     padding: 5px;
@@ -496,8 +500,8 @@ td {
     position: absolute;
     right: 10px;
     top: 0px;
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     background-color: #333;
     padding: 5px;
@@ -509,8 +513,8 @@ td {
 }
 
 .map-button {
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     background-color: whitesmoke;
     padding: 5px;
@@ -523,4 +527,9 @@ td {
 
 .map-button:hover {
     background-color: #FFF;
+}
+.ol-mouse-position {
+    position:absolute;
+    right:50px;
+    top:93%;
 }
