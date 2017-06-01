@@ -59,7 +59,7 @@ angular.module('dataLake.map-ui', [])
             }
             var req = {
                 method: 'POST',
-                url: "/prod/submit/",
+                url: "/prod/searchBounds/",
                 headers: {
                     'auth': $scope.auth
                 },

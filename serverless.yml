@@ -402,11 +402,11 @@ functions:
             - "application/json"
           authorizer: authorize
 
-  submit:
-    handler: services/webapp/index.handler
+  searchBounds:
+    handler: services/map-ui/index.handler
     events:
       - http:
-          path: submit
+          path: searchBounds
           method: any
           integration: lambda-proxy
           cors: true
