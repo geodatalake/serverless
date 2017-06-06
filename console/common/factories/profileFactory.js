@@ -54,7 +54,7 @@ angular.module('dataLake.factory.profile', ['ngResource', 'dataLake.service.auth
                 if (data.errorMessage) {
                     return cb(data.error, null);
                 }
-
+                console.log('profile', data)
                 return cb(null, data);
             }, function(err) {
                 console.log(err);

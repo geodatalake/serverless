@@ -5,6 +5,7 @@
         <span dom-region="header">Service Error </span>
         <span dom-region="content">An unexpected error occured when attempting to create the user invite.</span>
     </awsui-alert>
+    <pre>{{newinvite | json}}</pre>
     <form name="newInviteForm" novalidate ng-submit="createInvitation(newinvite, newInviteForm.$valid)">
         <awsui-control-group validation-message="{{ newInviteForm.name.$touched && newInviteForm.name.$invalid ? 'Name is required!' : '' }}" label="Name">
             <awsui-textfield name="name" ng-model="newinvite.name" required data-disabled="false" ></awsui-textfield>

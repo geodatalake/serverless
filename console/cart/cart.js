@@ -43,7 +43,7 @@ angular.module('dataLake.cart', ['dataLake.main', 'dataLake.utils', 'dataLake.fa
     $scope.manifests = [];
     $scope.showerror = false;
     $scope.tabs = [{
-        label: 'My Cart',
+        label: 'My Library',
         id: 'tab_pending'
     }, {
         label: 'My Manifests',
@@ -73,7 +73,7 @@ angular.module('dataLake.cart', ['dataLake.main', 'dataLake.utils', 'dataLake.fa
             });
 
             $scope.tabs = [{
-                label: ['My Cart', '(', $scope.cart.length, ')'].join(' '),
+                label: ['My Library', '(', $scope.cart.length, ')'].join(' '),
                 id: 'tab_pending'
             }, {
                 label: ['My Manifests', '(', $scope.manifests.length, ')'].join(' '),

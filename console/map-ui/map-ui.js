@@ -14,7 +14,7 @@ angular.module('dataLake.map-ui', [])
         });
     }])
 
-    .controller('IndexController', function ($scope, $http, map,authService, dataPackageFactory) {
+    .controller('IndexController', function ($scope, $state, $http, map, authService, dataPackageFactory) {
         console.log('map', map)
         $scope.layerImgSrc = "./map-ui/images/layer-switcher.png";
         authService.getUserAccessToken().then(function(token) {
@@ -268,7 +268,7 @@ angular.module('dataLake.map-ui', [])
             }
             var req = {
                 method: 'POST',
-                url: APIG_ENDPOINT +"/cart/new",
+                url: APIG_ENDPOINT + "/cart/new",
                 headers: {
                     'auth': $scope.auth
                 },
@@ -276,8 +276,7 @@ angular.module('dataLake.map-ui', [])
             }
             $http(req).then( function ( body) {
                 console.log(body)
-
-                    window.location = "http://datalakeweb-us-west-2-414519249282.s3-website-us-west-2.amazonaws.com/#/cart"
+                $state.go('cart', {});
             })
         }
     });

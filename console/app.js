@@ -34,6 +34,7 @@ angular.module('dataLake', [
     'dataLake.forgot',
     'dataLake.profile',
     'dataLake.profile.changepassword',
+    'dataLake.admin.create',
     'dataLake.admin.invitation',
     'dataLake.admin.users',
     'dataLake.admin.settings',
@@ -56,7 +57,7 @@ angular.module('dataLake', [
 
 .config(function($stateProvider, $urlRouterProvider) {
 
-    $urlRouterProvider.otherwise('/map-ui');
+    $urlRouterProvider.otherwise('/signin');
 })
 
 .run(function($rootScope, $state, authService) {
@@ -64,9 +65,10 @@ angular.module('dataLake', [
         if (toState.authenticate) {
             authService.isAuthenticated().then(function(authenticated) {
                 if (!authenticated) {
+                    // HACK: for demo
                     // User isn’t authenticated
-                    $state.transitionTo('signin');
-                    event.preventDefault();
+                    // $state.transitionTo('signin');
+                    // event.preventDefault();
                 }
             }).catch(function(result) {
                 // User isn’t authenticated

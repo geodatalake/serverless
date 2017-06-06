@@ -17,52 +17,60 @@
 
 'use strict';
 
-angular.module('dataLake.main', ['dataLake.factory.cart'])
+angular.module('dataLake.admin.create', ['dataLake.main', 'dataLake.utils', 'dataLake.factory.admin'])
 
-.controller('MainCtrl', function($scope, $state, $location, $rootScope, authService, cartFactory) {
-
-    $scope.username = '';
-    $scope.cartCount = 0;
-    $scope.showadmin = false;
-
-    authService.getUserInfo().then(function(result) {
-        console.log('user', result)
-        $rootScope.username = result.display_name;
-        $scope.username = $rootScope.username;
-        if (result.role !== 'Admin') {
-            var myEl = angular.element(document.querySelector('#adminMenu'));
-            myEl.empty();
-        } else {
-            $scope.showadmin = true;
-        }
-    }, function(msg) {
-        console.log('Unable to retrieve the user session.');
-        // $state.go('signin', {});
+.config(['$stateProvider', '$urlRouterProvider', function($stateProvider,
+    $urlRouterProvider) {
+    $stateProvider.state('admin_create', {
+        url: '/admin/create',
+        views: {
+            '': {
+                templateUrl: 'main/main.html',
+                controller: 'MainCtrl'
+            },
+            '@admin_create': {
+                templateUrl: 'admin/users/create.html',
+                controller: 'AdminCreateUserCtrl'
+            }
+        },
+        adminAuthenticate: true
     });
+}])
 
-    $scope.$watch(function() {
-        return cartFactory.cartCount;
-    }, function(NewValue, OldValue) {
-        $scope.cartCount = NewValue;
-        if ($scope.$$phase != '$digest') {
-            $scope.$apply();
-        }
-    });
+.controller('AdminCreateUserCtrl', function($scope, $state, $stateParams, $blockUI, authService) {
 
-    cartFactory.getCartCount(function(err, count) {
-        if (err) {
-            console.log('error', err);
-            return;
-        }
-    });
+    $scope.showCreateError = false;
+    $scope.roles = [{
+        value: 'Member',
+        text: 'Member'
+    }, {
+        value: 'Admin',
+        text: 'Admin'
+    }];
 
-    $scope.getMenuClass = function(path) {
-        return ($location.path().substr(0, path.length) === path) ? 'active' : '';
+    $scope.newinvite = {
+        role: 'Member'
     };
 
-    $scope.signout = function() {
-        if (authService.signOut()) {
-            $state.go('signin', {});
+    var _token = '';
+
+    $scope.createUser = function(newinvite, isValid) {
+        $blockUI.start();
+
+        if (isValid) {
+            authService.signup(newinvite, function(err, data) {
+                if (err) {
+                    console.log('error', err);
+                    $scope.showCreateError = true;
+                    $blockUI.stop();
+                    return;
+                }
+
+                $state.go('admin_users', {});
+            });
+        } else {
+            $scope.showCreateError = true;
+            $blockUI.stop();
         }
     };
 

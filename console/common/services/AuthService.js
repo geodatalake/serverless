@@ -23,21 +23,15 @@ angular.module('dataLake.service.auth', ['dataLake.utils'])
         this.signup = function(newuser) {
             var deferred = $q.defer();
 
-            newuser.username = newuser.email.replace('@', '_').replace(/\./g, '_');
-
             var poolData = {
                 UserPoolId: YOUR_USER_POOL_ID,
                 ClientId: YOUR_USER_POOL_CLIENT_ID,
                 Paranoia: 8
             };
+
             var userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
 
             var attributeList = [];
-
-            var dataEmail = {
-                Name: 'email',
-                Value: newuser.email
-            };
 
             var dataName = {
                 Name: 'name',
@@ -49,20 +43,39 @@ angular.module('dataLake.service.auth', ['dataLake.utils'])
                 Value: newuser.name
             };
 
-            var attributeEmail = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute(dataEmail);
-            var attributeName = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute(dataName);
-            var attributeDisplayName = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute(
-                dataDisplayName);
+            var dataRole = {
+                Name: 'custom:role',
+                Value: newuser.role
+            };
 
-            attributeList.push(attributeEmail);
+            var attributeName = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute(dataName);
+            var attributeDisplayName = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute(dataDisplayName);
+            var attributeRole = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute(dataRole);
+
             attributeList.push(attributeName);
             attributeList.push(attributeDisplayName);
+            attributeList.push(attributeRole);
+            attributeList.push(attributeEmail);
+
+            if (newuser.provider === 'google') {
+
+                newuser.username = newuser.email.replace('@', '_').replace(/\./g, '_');
+
+                var dataEmail = {
+                    Name: 'custom:email',
+                    Value: newuser.email
+                };
+
+                var attributeEmail = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute(dataEmail);
+                attributeList.push(attributeEmail);
+            }
 
             userPool.signUp(newuser.username, newuser.password, attributeList, null, function(err, result) {
                 if (err) {
                     console.log(err);
                     deferred.reject(err.message);
                 } else {
+                    console.log('result', result)
                     deferred.resolve(result.user);
                 }
             });
@@ -193,8 +206,6 @@ angular.module('dataLake.service.auth', ['dataLake.utils'])
 
         this.signin = function(user, authAction) {
 
-            console.log('invoked', user);
-
             var deferred = $q.defer();
 
             var authenticationData = {
@@ -221,9 +232,7 @@ angular.module('dataLake.service.auth', ['dataLake.utils'])
             try {
                 cognitoUser.authenticateUser(authenticationDetails, {
                     onSuccess: function(result) {
-
-                        console.log('result', result);
-
+                        console.log('result', result)
                         $localstorage.set('username', cognitoUser.getUsername());
                         deferred.resolve({
                             state: 'login_success',
@@ -388,31 +397,42 @@ angular.module('dataLake.service.auth', ['dataLake.utils'])
         };
 
         this.getUserAccessToken = function() {
+
             var deferred = $q.defer();
 
-            var data = {
-                UserPoolId: YOUR_USER_POOL_ID,
-                ClientId: YOUR_USER_POOL_CLIENT_ID,
-                Paranoia: 8
-            };
+            // if ($localstorage.get('auth_token') && $localstorage.get('refresh_token')) {
+            //     deferred.resolve({
+            //         token: { jwtToken: $localstorage.get('auth_token') }
+            //     });
+            // } else {
+                var data = {
+                    UserPoolId: YOUR_USER_POOL_ID,
+                    ClientId: YOUR_USER_POOL_CLIENT_ID,
+                    Paranoia: 8
+                };
 
-            var userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(data);
-            var cognitoUser = userPool.getCurrentUser();
+                var userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(data);
+                var cognitoUser = userPool.getCurrentUser();
 
-            if (cognitoUser != null) {
+                console.log('cognitoUser', cognitoUser)
 
-                cognitoUser.getSession(function(err, session) {
-                    if (err) {
-                        console.log(err);
-                        deferred.reject(err);
-                    }
+                if (cognitoUser != null) {
 
-                    deferred.resolve(session.accessToken);
-                });
+                    cognitoUser.getSession(function(err, session) {
+                        if (err) {
+                            console.log(err);
+                            deferred.reject(err);
+                        }
 
-            } else {
-                deferred.reject();
-            }
+                        console.log('session', session)
+
+                        deferred.resolve(session.accessToken);
+                    });
+
+                } else {
+                    deferred.reject();
+                }
+            // }
 
             return deferred.promise;
         };
@@ -420,32 +440,42 @@ angular.module('dataLake.service.auth', ['dataLake.utils'])
         this.getUserAccessTokenWithUsername = function() {
             var deferred = $q.defer();
 
-            var data = {
-                UserPoolId: YOUR_USER_POOL_ID,
-                ClientId: YOUR_USER_POOL_CLIENT_ID,
-                Paranoia: 8
-            };
+            // if ($localstorage.get('auth_token') && $localstorage.get('refresh_token')) {
+            //     var user = JSON.parse($localstorage.get('user'))
+            //     deferred.resolve({
+            //         token: { jwtToken: $localstorage.get('auth_token') },
+            //         username: user.username
+            //     });
+            // } else {
+                var data = {
+                    UserPoolId: YOUR_USER_POOL_ID,
+                    ClientId: YOUR_USER_POOL_CLIENT_ID,
+                    Paranoia: 8
+                };
 
-            var userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(data);
-            var cognitoUser = userPool.getCurrentUser();
+                var userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(data);
+                var cognitoUser = userPool.getCurrentUser();
 
-            if (cognitoUser != null) {
+                console.log('cognitoUser2', cognitoUser)
 
-                cognitoUser.getSession(function(err, session) {
-                    if (err) {
-                        console.log(err);
-                        deferred.reject(err);
-                    }
+                if (cognitoUser != null) {
 
-                    deferred.resolve({
-                        token: session.accessToken,
-                        username: cognitoUser.username
+                    cognitoUser.getSession(function(err, session) {
+                        if (err) {
+                            console.log(err);
+                            deferred.reject(err);
+                        }
+
+                        deferred.resolve({
+                            token: session.accessToken,
+                            username: cognitoUser.username
+                        });
                     });
-                });
 
-            } else {
-                deferred.reject();
-            }
+                } else {
+                    deferred.reject();
+                }
+            // }
 
             return deferred.promise;
         };
@@ -474,72 +504,89 @@ angular.module('dataLake.service.auth', ['dataLake.utils'])
         this.getUserInfo = function() {
             var deferred = $q.defer();
 
-            var userinfo = {
-                email: '',
-                name: '',
-                username: '',
-                display_name: ''
-            };
+            // TODO: optimize for google
+            if ($localstorage.get('auth_token')) {
+                var user = JSON.parse($localstorage.get('user'))
+                var userinfo = {
+                    email: user.email,
+                    name: user.username,
+                    username: user.username,
+                    display_name: user.username,
+                    role: 'Admin'
+                };
+                deferred.resolve(userinfo);
+            } else {
+                var userinfo = {
+                    email: '',
+                    name: '',
+                    username: '',
+                    display_name: ''
+                };
 
-            var data = {
-                UserPoolId: YOUR_USER_POOL_ID,
-                ClientId: YOUR_USER_POOL_CLIENT_ID,
-                Paranoia: 8
-            };
+                var data = {
+                    UserPoolId: YOUR_USER_POOL_ID,
+                    ClientId: YOUR_USER_POOL_CLIENT_ID,
+                    Paranoia: 8
+                };
 
-            var userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(data);
-            var cognitoUser = userPool.getCurrentUser();
+                var userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(data);
+                var cognitoUser = userPool.getCurrentUser();
 
-            if (cognitoUser != null) {
+                if (cognitoUser != null) {
 
-                cognitoUser.getSession(function(err, session) {
-                    if (err) {
-                        console.log(err);
-                        deferred.reject(err);
-                    }
-
-                    cognitoUser.getUserAttributes(function(err, result) {
+                    cognitoUser.getSession(function(err, session) {
                         if (err) {
                             console.log(err);
                             deferred.reject(err);
                         }
 
-                        var em = $_.where(result, {
-                            Name: 'email'
+                        cognitoUser.getUserAttributes(function(err, result) {
+                            if (err) {
+                                console.log(err);
+                                deferred.reject(err);
+                            }
+
+                            var em = $_.where(result, {
+                                Name: 'email'
+                            });
+
+                            if (em.length > 0) {
+                                userinfo.email = em[0].Value;
+                            }
+
+                            var dn = $_.where(result, {
+                                Name: 'custom:display_name'
+                            });
+
+                            if (dn.length > 0) {
+                                userinfo.display_name = dn[0].Value;
+                            }
+
+                            var ak = $_.where(result, {
+                                Name: 'custom:accesskey'
+                            });
+
+                            if (ak.length > 0) {
+                                userinfo.accesskey = ak[0].Value;
+                            }
+
+                            var rl = $_.where(result, {
+                                Name: 'custom:role'
+                            });
+
+                            if (rl.length > 0) {
+                                userinfo.role = rl[0].Value;
+                            }
+
+                            userinfo.username = cognitoUser.getUsername();
+
+                            deferred.resolve(userinfo);
+
                         });
-                        if (em.length > 0) {
-                            userinfo.email = em[0].Value;
-                        }
-
-                        var dn = $_.where(result, {
-                            Name: 'custom:display_name'
-                        });
-                        if (dn.length > 0) {
-                            userinfo.display_name = dn[0].Value;
-                        }
-
-                        var ak = $_.where(result, {
-                            Name: 'custom:accesskey'
-                        });
-                        if (ak.length > 0) {
-                            userinfo.accesskey = ak[0].Value;
-                        }
-
-                        var rl = $_.where(result, {
-                            Name: 'custom:role'
-                        });
-                        if (rl.length > 0) {
-                            userinfo.role = rl[0].Value;
-                        }
-
-                        userinfo.username = cognitoUser.getUsername();
-
-                        deferred.resolve(userinfo);
-
                     });
-                });
-            } else {
-                deferred.reject('Cognito User is null.');
+                } else {
+                    deferred.reject('Cognito User is null.');
+                }
             }
 
             return deferred.promise;
